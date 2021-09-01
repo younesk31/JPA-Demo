@@ -6,11 +6,14 @@
 package dat3.jpademo.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 /**
@@ -28,6 +31,28 @@ public class Person implements Serializable {
     private int year;
     @OneToOne(cascade = CascadeType.PERSIST)
     private Address address;
+    @OneToMany(mappedBy = "person" ,cascade = CascadeType.PERSIST)
+    List<Fee> fees; 
+
+    public List<Fee> getFees() {
+        return fees;
+    }
+
+    public void addFees(Fee fee) {
+        this.fees.add(fee);
+        if (fee != null) {
+            fee.setPerson(this);
+        }
+    }
+
+    public Person() {
+    }
+    
+    public Person(String name, int year) {
+        this.name = name;
+        this.year = year;
+        this.fees = new ArrayList<>();
+    }
 
     public Address getAddress() {
         return address;
@@ -39,10 +64,7 @@ public class Person implements Serializable {
             address.setPerson(this);
         }
     }
-
-    public Person() {
-    }
-
+    
     public Long getP_id() {
         return p_id;
     }
@@ -65,12 +87,5 @@ public class Person implements Serializable {
 
     public void setYear(int year) {
         this.year = year;
-    }
-
-    public Person(String name, int year) {
-        this.name = name;
-        this.year = year;
-    }
-
-    
+    }    
 }
