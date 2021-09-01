@@ -1,25 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package dat3.jpademo.entities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
-/**
- *
- * @author youne
- */
 @Entity
 public class Person implements Serializable {
 
@@ -31,8 +16,10 @@ public class Person implements Serializable {
     private int year;
     @OneToOne(cascade = CascadeType.PERSIST)
     private Address address;
-    @OneToMany(mappedBy = "person" ,cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "person", cascade = CascadeType.PERSIST)
     List<Fee> fees; 
+    @ManyToMany(mappedBy = "persons", cascade = CascadeType.PERSIST)
+    List<SwimStyle> styles;
 
     public List<Fee> getFees() {
         return fees;
@@ -44,6 +31,20 @@ public class Person implements Serializable {
             fee.setPerson(this);
         }
     }
+    
+    public void addSwimStyle(SwimStyle style) {
+        if (style != null) {
+            this.styles.add(style);
+            style.getPersons().add(this);
+        }
+    }
+    
+    public void removeSwimStyle(SwimStyle swimStyle) {
+        if (swimStyle != null) {
+            styles.remove(swimStyle);
+            swimStyle.getPersons().remove(this);
+        }
+    }
 
     public Person() {
     }
@@ -52,6 +53,7 @@ public class Person implements Serializable {
         this.name = name;
         this.year = year;
         this.fees = new ArrayList<>();
+        this.styles = new ArrayList<>();
     }
 
     public Address getAddress() {
